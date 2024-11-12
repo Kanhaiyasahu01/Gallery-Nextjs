@@ -8,32 +8,51 @@ import { Badge } from "./ui/badge";
 import { IPostDocument } from "@/models/post.model";
 import { PostContent } from "./PostContent";
 import SocialOptions from "./SocialOptions";
+import { deletePostAction } from "@/lib/serveractions";
 
-const Post = ({post}:{post:IPostDocument}) => {
-  const {user} = useUser();
-  const fullName = post?.user?.firstName + " "+post?.user?.lastName
+const Post = ({ post }: { post: IPostDocument }) => {
+  const { user } = useUser();
+  const fullName = post?.user?.firstName + " " + post?.user?.lastName;
+  const loggedInUser = user?.id === post?.user?.userId;
+
   console.log(user);
   return (
     <div className="bg-white my-2 mx-2 md:mx-0 shadow  shadow-gray-300 rounded-md  ">
       <div className="flex gap-2 p-4">
-        <ProfilePhoto src={post.user.profilePhoto!}/>
+        <ProfilePhoto src={post.user.profilePhoto!} />
         <div className="flex items-center justify-between w-full">
           <div>
-            <h1 className="text-sm font-bold">{fullName}<Badge variant={'secondary'} className="ml-2">You</Badge></h1>
-            <p className="text-xs text-gray-500">@{ user? user?.username :"username"}</p>
+            <h1 className="text-sm font-bold">
+              {fullName}
+              <Badge variant={"secondary"} className="ml-2">
+                You
+              </Badge>
+            </h1>
             <p className="text-xs text-gray-500">
-              {new Date(post?.createdAt).toLocaleString('en-US')}
+              @{user ? user?.username : "username"}
             </p>
-            </div>
+            <p className="text-xs text-gray-500">
+              {new Date(post?.createdAt).toLocaleString("en-US")}
+            </p>
+          </div>
         </div>
         <div>
-          <Button size={"icon"} className="rounded-full" variant={"outline"}>
-            <Trash2 />
-          </Button>
+          {loggedInUser && (
+            <Button
+              onClick={() => {
+                const res = deletePostAction(post._id as string);
+              }}
+              size={"icon"}
+              className="rounded-full"
+              variant={"outline"}
+            >
+              <Trash2 />
+            </Button>
+          )}
         </div>
       </div>
-      <PostContent post={post}/>
-      <SocialOptions/>
+      <PostContent post={post} />
+      <SocialOptions post={post} />
     </div>
   );
 };
