@@ -1,11 +1,18 @@
 import React from 'react'
+import Post from './Post'
+import { IPostDocument } from '@/models/post.model'
 
-const Posts = () => {
+
+const Posts = ({posts}:{posts:IPostDocument[]}) => {
   return (
-    <div className='bg-white my-2 rounded-lg border border-gray-300'>
-      <div className='flex gap-2 p-4'>
-          
-      </div>
+    <div>
+      {
+        posts?.map((post,index)=>{
+          return (
+            <Post key={index} post={post}/>
+          )
+        })
+      }
     </div>
   )
 }
